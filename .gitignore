@@ -3,3 +3,5 @@
 ################################################################################
 
 /.vs/SampleOrderSystem
+/SampleOrdersWebAPI/bin/Debug/netcoreapp3.1
+/SampleOrdersWebAPI/obj
