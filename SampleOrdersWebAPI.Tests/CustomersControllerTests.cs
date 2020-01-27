@@ -2,6 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SampleOrdersWebAPI.Controllers;
 using SampleOrdersWebAPI.Models;
 using System.Collections.Generic;
+using Moq;
 
 namespace SampleOrdersWebAPI.Tests
 {
@@ -11,7 +12,9 @@ namespace SampleOrdersWebAPI.Tests
         [TestMethod]
         public void GetAllCustomers_ShouldReturnAllCustomers()
         {
+            Mock<SampleOrdersContext> mockContext = new Mock<SampleOrdersContext>();
 
+            var app = new CustomersController(mockContext.Object);
         }
 
 
