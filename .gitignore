@@ -8,3 +8,6 @@
 /SampleOrdersWebAPI.Tests/bin/Debug/netcoreapp3.1
 /SampleOrdersWebAPI.Tests/obj/Debug/netcoreapp3.1
 /SampleOrdersWebAPI.Tests/obj
+/packages
+/SampleOrderWebAPITests/bin/Debug/netcoreapp3.1
+/SampleOrderWebAPITests/obj

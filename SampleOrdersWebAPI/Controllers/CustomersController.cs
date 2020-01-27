@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SampleOrdersWebAPI.DataRepositories;
 using SampleOrdersWebAPI.Models;
 
 namespace SampleOrdersWebAPI.Controllers
@@ -15,20 +16,24 @@ namespace SampleOrdersWebAPI.Controllers
     {
         private readonly SampleOrdersContext _context;
 
-        public CustomersController()
+        protected ICustomersRepository _customersRepo;
+
+        protected CustomersController()
         {
+            _customersRepo = GetRepository();
         }
 
         public CustomersController(SampleOrdersContext context)
         {
             _context = context;
+            _customersRepo = GetRepository();
         }
 
         // GET: api/Customers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers()
         {
-            return await _context.Customers.Include(c => c.Orders).ToListAsync();
+            return await _customersRepo.GetAllAsync();
         }
 
         // GET: api/Customers/5
@@ -49,7 +54,8 @@ namespace SampleOrdersWebAPI.Controllers
         [Route("noorders")]
         public async Task<ActionResult<IEnumerable<Customer>>> GetCustomerWithoutOrders()
         {
-            return await _context.Customers.Include(c => c.Orders).Where(c => c.Orders == null || c.Orders.Count == 0).ToListAsync();
+            var allCustomers = await _customersRepo.GetAllAsync();
+            return allCustomers.Where(c => c.Orders == null || c.Orders.Count == 0).ToList();
         }
         // PUT: api/Customers/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
@@ -114,6 +120,14 @@ namespace SampleOrdersWebAPI.Controllers
         private bool CustomerExists(int id)
         {
             return _context.Customers.Any(e => e.Id == id);
+        }
+
+        protected virtual ICustomersRepository GetRepository()
+        {
+            if (_context != null)
+                return new CustomersRepository(_context);
+            else
+                return null;
         }
     }
 }

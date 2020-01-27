@@ -10,8 +10,8 @@ namespace SampleOrdersWebAPI.Tests
     {
         public TestSampleOrdersContext()
         {
-            this.Customers = new TestCustomerDbSet();
-            this.Orders = new TestOrderDbSet();
+            //this.Customers = new TestCustomerDbSet();
+            //this.Orders = new TestOrderDbSet();
         }
 
         public DbSet<Customer> Customers { get; set;}
