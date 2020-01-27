@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SampleOrdersWebAPI.Models
 {
-    public class SampleOrdersContext : DbContext
+    public class SampleOrdersContext : DbContext, ISampleOrdersContext
     {
         public SampleOrdersContext(DbContextOptions<SampleOrdersContext> options) : base(options)
         {

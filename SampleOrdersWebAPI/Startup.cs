@@ -27,7 +27,7 @@ namespace SampleOrdersWebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<SampleOrdersContext>(opt => opt.UseSqlServer("Server=localhost;Database=SampleOrders;Trusted_Connection=True;"));
+            services.AddDbContext<SampleOrdersContext>(opt => opt.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=SampleOrders;Trusted_Connection=True;"));
             
             services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }

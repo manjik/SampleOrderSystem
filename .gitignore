@@ -5,3 +5,6 @@
 /.vs/SampleOrderSystem
 /SampleOrdersWebAPI/bin/Debug/netcoreapp3.1
 /SampleOrdersWebAPI/obj
+/SampleOrdersWebAPI.Tests/bin/Debug/netcoreapp3.1
+/SampleOrdersWebAPI.Tests/obj/Debug/netcoreapp3.1
+/SampleOrdersWebAPI.Tests/obj

@@ -15,6 +15,10 @@ namespace SampleOrdersWebAPI.Controllers
     {
         private readonly SampleOrdersContext _context;
 
+        public CustomersController()
+        {
+        }
+
         public CustomersController(SampleOrdersContext context)
         {
             _context = context;
