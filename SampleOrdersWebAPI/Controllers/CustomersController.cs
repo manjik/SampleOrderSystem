@@ -40,7 +40,8 @@ namespace SampleOrdersWebAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Customer>> GetCustomer(int id)
         {
-            var customer = await _context.Customers.Include(c => c.Orders).FirstOrDefaultAsync(c => c.Id == id);
+            var allCustomers = await _customersRepo.GetAllAsync();
+            var customer = allCustomers.FirstOrDefault(c => c.Id == id);
 
             if (customer == null)
             {
@@ -57,6 +58,7 @@ namespace SampleOrdersWebAPI.Controllers
             var allCustomers = await _customersRepo.GetAllAsync();
             return allCustomers.Where(c => c.Orders == null || c.Orders.Count == 0).ToList();
         }
+
         // PUT: api/Customers/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
