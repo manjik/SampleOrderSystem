@@ -10,6 +10,6 @@ namespace SampleOrdersWebAPI.DataRepositories
     {
         Task<List<T>> GetAllAsync();
 
-        Task<IActionResult> Update(T item);
+        Task<int> Update(T item);
     }
 }

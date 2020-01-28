@@ -74,7 +74,7 @@ namespace SampleOrdersWebAPI.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _customersRepo.Update(customer);
             }
             catch (DbUpdateConcurrencyException)
             {
