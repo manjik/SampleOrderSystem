@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SampleOrdersWebAPI.DataRepositories;
 using SampleOrdersWebAPI.Models;
 
 namespace SampleOrdersWebAPI.Controllers
@@ -15,23 +16,32 @@ namespace SampleOrdersWebAPI.Controllers
     {
         private readonly SampleOrdersContext _context;
 
+        protected IOrdersRepository _ordersRepo;
+
+        protected OrdersController()
+        {
+            _ordersRepo = GetRepository();
+        }
+
         public OrdersController(SampleOrdersContext context)
         {
             _context = context;
+            _ordersRepo = GetRepository();
         }
 
         // GET: api/Orders
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
         {
-            return await _context.Orders.Include(o => o.Customer).ToListAsync();
+            return await _ordersRepo.GetAllAsync();
         }
 
         // GET: api/Orders/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Order>> GetOrder(int id)
         {
-            var order = await _context.Orders.Include(o => o.Customer).FirstOrDefaultAsync(o => o.Id == id);
+            var allOrders = await _ordersRepo.GetAllAsync();
+            var order = allOrders.FirstOrDefault(c => c.Id == id);
 
             if (order == null)
             {
@@ -52,15 +62,13 @@ namespace SampleOrdersWebAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(order).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _ordersRepo.Update(order);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!OrderExists(id))
+                if (!await OrderExistsAsync(id))
                 {
                     return NotFound();
                 }
@@ -79,8 +87,7 @@ namespace SampleOrdersWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Order>> PostOrder(Order order)
         {
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
+            await _ordersRepo.Create(order);
 
             return CreatedAtAction("GetOrder", new { id = order.Id }, order);
         }
@@ -89,21 +96,33 @@ namespace SampleOrdersWebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Order>> DeleteOrder(int id)
         {
-            var order = await _context.Orders.FindAsync(id);
+            var allOrders = await _ordersRepo.GetAllAsync();
+            var order = allOrders.FirstOrDefault(c => c.Id == id);
+            
             if (order == null)
             {
                 return NotFound();
             }
 
-            _context.Orders.Remove(order);
-            await _context.SaveChangesAsync();
+            await _ordersRepo.Delete(order);
 
             return order;
         }
 
-        private bool OrderExists(int id)
+        private async Task<bool> OrderExistsAsync(int id)
         {
-            return _context.Orders.Any(e => e.Id == id);
+            var allCustomers = await _ordersRepo.GetAllAsync();
+
+            return allCustomers.Any(e => e.Id == id);
+        }
+
+
+        protected virtual IOrdersRepository GetRepository()
+        {
+            if (_context != null)
+                return new OrdersRepository(_context);
+            else
+                return null;
         }
     }
 }

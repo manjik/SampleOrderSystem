@@ -70,15 +70,13 @@ namespace SampleOrdersWebAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(customer).State = EntityState.Modified;
-
             try
             {
                 await _customersRepo.Update(customer);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CustomerExists(id))
+                if (!await CustomerExistsAsync(id))
                 {
                     return NotFound();
                 }
@@ -97,9 +95,8 @@ namespace SampleOrdersWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
         {
-            _context.Customers.Add(customer);
-            await _context.SaveChangesAsync();
-
+            await _customersRepo.Create(customer);
+            
             return CreatedAtAction("GetCustomer", new { id = customer.Id }, customer);
         }
 
@@ -107,21 +104,24 @@ namespace SampleOrdersWebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Customer>> DeleteCustomer(int id)
         {
-            var customer = await _context.Customers.FindAsync(id);
+            var allCustomers = await _customersRepo.GetAllAsync();
+            var customer = allCustomers.FirstOrDefault(c => c.Id == id);
+            
             if (customer == null)
             {
                 return NotFound();
             }
 
-            _context.Customers.Remove(customer);
-            await _context.SaveChangesAsync();
+            await _customersRepo.Delete(customer);
 
             return customer;
         }
 
-        private bool CustomerExists(int id)
+        private async Task<bool> CustomerExistsAsync(int id)
         {
-            return _context.Customers.Any(e => e.Id == id);
+            var allCustomers = await _customersRepo.GetAllAsync();
+
+            return allCustomers.Any(e => e.Id == id);
         }
 
         protected virtual ICustomersRepository GetRepository()

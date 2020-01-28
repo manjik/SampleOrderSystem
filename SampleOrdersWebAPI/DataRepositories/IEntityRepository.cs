@@ -11,5 +11,9 @@ namespace SampleOrdersWebAPI.DataRepositories
         Task<List<T>> GetAllAsync();
 
         Task<int> Update(T item);
+
+        Task<int> Create(T item);
+
+        Task<int> Delete(T item);
     }
 }

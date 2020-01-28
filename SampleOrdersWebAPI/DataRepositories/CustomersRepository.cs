@@ -29,5 +29,18 @@ namespace SampleOrdersWebAPI.DataRepositories
             return await _context.SaveChangesAsync(); 
         }
 
+        public async Task<int> Create(Customer customer)
+        {
+            _context.Customers.Add(customer);
+
+            return await _context.SaveChangesAsync();
+        }
+
+        public async Task<int> Delete(Customer customer)
+        {
+            _context.Customers.Remove(customer);
+
+            return await _context.SaveChangesAsync();
+        }
     }
 }

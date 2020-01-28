@@ -48,5 +48,20 @@ namespace SampleOrdersWebAPI.Tests
         {
             return await GetTestCustomers();
         }
+
+        public Task<int> Update(Customer item)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<int> Create(Customer item)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<int> Delete(Customer item)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
