@@ -13,7 +13,7 @@ namespace SampleOrdersWebAPI.Tests
     public class CustomersControllerTests
     {
         [TestMethod]
-        public async Task GetNoOrdersCustomers_ShouldReturnAllCustomersWithoutOrdersAsync()
+        public async Task GetNoOrdersCustomersForCustomersWithAndWithoutOrders_ShouldReturnAllCustomersWithoutOrders()
         {
             var testCustomers = new List<Customer>();
             testCustomers.Add(new Customer { Id = 1, Name = "TestNoOrder", Email = "test_no_order@email.com", Orders = null });
@@ -28,68 +28,50 @@ namespace SampleOrdersWebAPI.Tests
             Assert.AreEqual(1, customersWithoutOrders.Count);
             Assert.AreEqual("TestNoOrder", customersWithoutOrders[0].Name);
         }
-    }
 
-    internal class TestCustomersController : CustomersController
-    {
-        List<Customer> _testCutomers;
-
-        public TestCustomersController()
-        {
-        }
-
-        public TestCustomersController(List<Customer> testData)
-        {
-            _testCutomers = testData;
-        }
-
-        protected override ICustomersRepository GetRepository()
-        {
-            return new TestCustomersRepository(_testCutomers);
-        }
-    }
-
-    internal class TestCustomersRepository : ICustomersRepository
-    {
-        List<Customer> _testCutomers;
-
-        public TestCustomersRepository() 
-        {
-        }
-
-        public TestCustomersRepository(List<Customer> testData)
-        {
-            _testCutomers = testData;
-        }
-
-        private async Task<List<Customer>> GetTestCustomers()
+        [TestMethod]
+        public async Task GetNoOrdersCustomersForCustomersWithoutOrders_ShouldReturnAllCustomersWithoutOrders()
         {
             var testCustomers = new List<Customer>();
-            
-            foreach (Customer customer in _testCutomers)
-                testCustomers.Add(customer);
+            testCustomers.Add(new Customer { Id = 1, Name = "TestNoOrder", Email = "test_no_order@email.com", Orders = null });
+            testCustomers.Add(new Customer { Id = 2, Name = "TestNoOrder2", Email = "test_order@email.com", Orders = null });
 
-            return testCustomers;
+            var customersController = new TestCustomersController(testCustomers);
+
+            var customersWithoutOrders = (await customersController.GetCustomerWithoutOrders()).Value.ToList();
+
+            Assert.AreEqual(2, customersWithoutOrders.Count);
+            Assert.AreEqual("TestNoOrder", customersWithoutOrders[0].Name);
+            Assert.AreEqual("TestNoOrder2", customersWithoutOrders[1].Name);
         }
 
-        public async Task<List<Customer>> GetAllAsync()
+        [TestMethod]
+        public async Task GetNoOrdersCustomersForCustomersWithOrders_ShouldReturnEmptyList()
         {
-            return await GetTestCustomers();
+            var testOrder = new List<Order>();
+            testOrder.Add(new Order { Id = 1, CustomerId = 1, Price = 1, CreatedDate = DateTime.Today });
+            var testCustomers = new List<Customer>();
+            testCustomers.Add(new Customer { Id = 1, Name = "TestNoOrder", Email = "test_no_order@email.com", Orders = testOrder });
+            testOrder[0].CustomerId = 2;
+            testCustomers.Add(new Customer { Id = 2, Name = "TestOrder", Email = "test_order@email.com", Orders = testOrder });
+
+            var customersController = new TestCustomersController(testCustomers);
+
+            var customersWithoutOrders = (await customersController.GetCustomerWithoutOrders()).Value.ToList();
+
+            Assert.AreEqual(0, customersWithoutOrders.Count);
         }
 
-        public Task<int> Update(Customer item)
+        [TestMethod]
+        public async Task GetNoOrdersCustomersForEmptyList_ShouldReturnEmptyList()
         {
-            throw new System.NotImplementedException();
-        }
+            var testCustomers = new List<Customer>();
 
-        public Task<int> Create(Customer item)
-        {
-            throw new System.NotImplementedException();
-        }
+            var customersController = new TestCustomersController(testCustomers);
 
-        public Task<int> Delete(Customer item)
-        {
-            throw new System.NotImplementedException();
+            var customersWithoutOrders = (await customersController.GetCustomerWithoutOrders()).Value.ToList();
+
+            Assert.AreEqual(0, customersWithoutOrders.Count);
         }
     }
 }
