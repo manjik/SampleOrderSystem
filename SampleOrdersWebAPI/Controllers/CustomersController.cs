@@ -19,6 +19,10 @@ namespace SampleOrdersWebAPI.Controllers
         protected ICustomersRepository _customersRepo;
         protected ICustomersRepository _CustomersRepo => _customersRepo ?? (_customersRepo = GetRepository());
 
+        protected CustomersController()
+        {
+        }
+
         public CustomersController(SampleOrdersContext context)
         {
             _context = context;

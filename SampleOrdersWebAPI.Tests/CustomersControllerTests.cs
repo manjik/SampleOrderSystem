@@ -25,7 +25,7 @@ namespace SampleOrdersWebAPI.Tests
             
             var customersWithoutOrders = (await customersController.GetCustomerWithoutOrders()).Value.ToList();
 
-            Assert.AreEqual(2, customersWithoutOrders.Count);
+            Assert.AreEqual(1, customersWithoutOrders.Count);
             Assert.AreEqual("TestNoOrder", customersWithoutOrders[0].Name);
         }
     }
@@ -53,7 +53,7 @@ namespace SampleOrdersWebAPI.Tests
     {
         List<Customer> _testCutomers;
 
-        public TestCustomersRepository()
+        public TestCustomersRepository() 
         {
         }
 
