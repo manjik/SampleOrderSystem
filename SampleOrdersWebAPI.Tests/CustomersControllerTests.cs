@@ -2,6 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SampleOrdersWebAPI.Controllers;
 using SampleOrdersWebAPI.DataRepositories;
 using SampleOrdersWebAPI.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,11 +15,13 @@ namespace SampleOrdersWebAPI.Tests
         [TestMethod]
         public async Task GetNoOrdersCustomers_ShouldReturnAllCustomersWithoutOrdersAsync()
         {
-            var testData = new List<Customer>();
-            testData.Add(new Customer { Id = 1, Name = "TestNoOrder", Email = "test_no_order@email.com", Orders = null });
-            testData.Add(new Customer { Id = 2, Name = "TestOrder", Email = "test_order@email.com", Orders = null });
+            var testCustomers = new List<Customer>();
+            testCustomers.Add(new Customer { Id = 1, Name = "TestNoOrder", Email = "test_no_order@email.com", Orders = null });
+            var testOrder = new List<Order>();
+            testOrder.Add(new Order { Id = 1, CustomerId = 2, Price = 1, CreatedDate = DateTime.Today });
+            testCustomers.Add(new Customer { Id = 2, Name = "TestOrder", Email = "test_order@email.com", Orders = testOrder });
 
-            var customersController = new TestCustomersController(testData);
+            var customersController = new TestCustomersController(testCustomers);
             
             var customersWithoutOrders = (await customersController.GetCustomerWithoutOrders()).Value.ToList();
 

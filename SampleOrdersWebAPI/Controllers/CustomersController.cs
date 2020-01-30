@@ -17,30 +17,25 @@ namespace SampleOrdersWebAPI.Controllers
         private readonly SampleOrdersContext _context;
 
         protected ICustomersRepository _customersRepo;
-
-        protected CustomersController()
-        {
-            _customersRepo = GetRepository();
-        }
+        protected ICustomersRepository _CustomersRepo => _customersRepo ?? (_customersRepo = GetRepository());
 
         public CustomersController(SampleOrdersContext context)
         {
             _context = context;
-            _customersRepo = GetRepository();
         }
 
         // GET: api/Customers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers()
         {
-            return await _customersRepo.GetAllAsync();
+            return await _CustomersRepo.GetAllAsync();
         }
 
         // GET: api/Customers/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Customer>> GetCustomer(int id)
         {
-            var allCustomers = await _customersRepo.GetAllAsync();
+            var allCustomers = await _CustomersRepo.GetAllAsync();
             var customer = allCustomers.FirstOrDefault(c => c.Id == id);
 
             if (customer == null)
@@ -55,7 +50,7 @@ namespace SampleOrdersWebAPI.Controllers
         [Route("noorders")]
         public async Task<ActionResult<IEnumerable<Customer>>> GetCustomerWithoutOrders()
         {
-            var allCustomers = await _customersRepo.GetAllAsync();
+            var allCustomers = await _CustomersRepo.GetAllAsync();
             return allCustomers.Where(c => c.Orders == null || c.Orders.Count == 0).ToList();
         }
 
@@ -72,7 +67,7 @@ namespace SampleOrdersWebAPI.Controllers
 
             try
             {
-                await _customersRepo.Update(customer);
+                await _CustomersRepo.Update(customer);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -95,7 +90,7 @@ namespace SampleOrdersWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
         {
-            await _customersRepo.Create(customer);
+            await _CustomersRepo.Create(customer);
             
             return CreatedAtAction("GetCustomer", new { id = customer.Id }, customer);
         }
@@ -104,7 +99,7 @@ namespace SampleOrdersWebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Customer>> DeleteCustomer(int id)
         {
-            var allCustomers = await _customersRepo.GetAllAsync();
+            var allCustomers = await _CustomersRepo.GetAllAsync();
             var customer = allCustomers.FirstOrDefault(c => c.Id == id);
             
             if (customer == null)
@@ -112,14 +107,14 @@ namespace SampleOrdersWebAPI.Controllers
                 return NotFound();
             }
 
-            await _customersRepo.Delete(customer);
+            await _CustomersRepo.Delete(customer);
 
             return customer;
         }
 
         private async Task<bool> CustomerExistsAsync(int id)
         {
-            var allCustomers = await _customersRepo.GetAllAsync();
+            var allCustomers = await _CustomersRepo.GetAllAsync();
 
             return allCustomers.Any(e => e.Id == id);
         }
