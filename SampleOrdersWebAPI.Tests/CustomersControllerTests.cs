@@ -15,11 +15,12 @@ namespace SampleOrdersWebAPI.Tests
         [TestMethod]
         public async Task GetNoOrdersCustomersForCustomersWithAndWithoutOrders_ShouldReturnAllCustomersWithoutOrders()
         {
-            var testCustomers = new List<Customer>();
-            testCustomers.Add(new Customer { Id = 1, Name = "TestNoOrder", Email = "test_no_order@email.com", Orders = null });
-            var testOrder = new List<Order>();
-            testOrder.Add(new Order { Id = 1, CustomerId = 2, Price = 1, CreatedDate = DateTime.Today });
-            testCustomers.Add(new Customer { Id = 2, Name = "TestOrder", Email = "test_order@email.com", Orders = testOrder });
+            var testCustomers = new List<Customer>()
+            {
+                new Customer { Id = 1, Name = "TestNoOrder", Email = "test_no_order@email.com", Orders = null},
+                new Customer { Id = 2, Name = "TestOrder", Email = "test_order@email.com",
+                    Orders = new List<Order> { new Order { Id = 1, CustomerId = 1, Price = 1, CreatedDate = DateTime.Today } } }
+            };
 
             var customersController = new TestCustomersController(testCustomers);
             
@@ -48,12 +49,13 @@ namespace SampleOrdersWebAPI.Tests
         [TestMethod]
         public async Task GetNoOrdersCustomersForCustomersWithOrders_ShouldReturnEmptyList()
         {
-            var testOrder = new List<Order>();
-            testOrder.Add(new Order { Id = 1, CustomerId = 1, Price = 1, CreatedDate = DateTime.Today });
-            var testCustomers = new List<Customer>();
-            testCustomers.Add(new Customer { Id = 1, Name = "TestNoOrder", Email = "test_no_order@email.com", Orders = testOrder });
-            testOrder[0].CustomerId = 2;
-            testCustomers.Add(new Customer { Id = 2, Name = "TestOrder", Email = "test_order@email.com", Orders = testOrder });
+            var testCustomers = new List<Customer>()
+            {
+                new Customer { Id = 1, Name = "TestNoOrder", Email = "test_no_order@email.com",
+                                Orders = new List<Order> {new Order { Id = 1, CustomerId = 1, Price = 1, CreatedDate = DateTime.Today} } },
+                new Customer { Id = 2, Name = "TestOrder", Email = "test_order@email.com",
+                                Orders = new List<Order> { new Order { Id = 1, CustomerId = 1, Price = 1, CreatedDate = DateTime.Today } } }
+            };
 
             var customersController = new TestCustomersController(testCustomers);
 
